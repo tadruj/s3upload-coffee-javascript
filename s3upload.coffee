@@ -5,18 +5,17 @@
 # https://github.com/carsonmcdonald/direct-browser-s3-upload-example
 
 class window.S3Upload
-	s3_object_name: 'default_name' # setting an object name is not recommended on the client side, override or namespace on server side
 	s3_sign_put_url: '/signS3put'
 	file_dom_selector: '#file_upload'
 
-	onFinishS3Put: (public_url) ->
-		console.log 'base.onFinishS3Put()', public_url
+	onFinishS3Put: (public_url, file) ->
+		console.log 'base.onFinishS3Put()', public_url, file
 
-	onProgress: (percent, status) ->
-		console.log 'base.onProgress()', percent, status
+	onProgress: (percent, status, public_url, file) ->
+		console.log 'base.onProgress()', percent, status, public_url, file
 
-	onError: (status) ->
-		console.log 'base.onError()', status
+	onError: (status, file) ->
+		console.log 'base.onError()', status, file
 
 	# Don't override these
 
@@ -46,7 +45,7 @@ class window.S3Upload
 		this_s3upload = this
 
 		xhr = new XMLHttpRequest()
-		xhr.open 'GET', @s3_sign_put_url + '?s3_object_type=' + file.type + '&s3_object_name=' + @s3_object_name, true
+		xhr.open 'GET', @s3_sign_put_url + '?s3_object_type=' + file.type + '&s3_object_name=' + encodeURIComponent(file.name), true
 
 		# Hack to pass bytes through unprocessed.
 		xhr.overrideMimeType 'text/plain; charset=x-user-defined'
@@ -58,7 +57,7 @@ class window.S3Upload
 				catch error
 					this_s3upload.onError 'Signing server returned some ugly/empty JSON: "' + this.responseText + '"'
 					return false
-				callback decodeURIComponent(result.signed_request), result.url
+				callback result.signed_request, result.url
 			else if this.readyState == 4 and this.status != 200
 				this_s3upload.onError 'Could not contact request signing server. Status = ' + this.status
 		xhr.send()
@@ -74,18 +73,18 @@ class window.S3Upload
 		else
 			xhr.onload = ->
 				if xhr.status == 200
-					this_s3upload.onProgress 100, 'Upload completed.'
-					this_s3upload.onFinishS3Put public_url
+					this_s3upload.onProgress 100, 'Upload completed.', public_url, file
+					this_s3upload.onFinishS3Put public_url, file
 				else
-					this_s3upload.onError 'Upload error: ' + xhr.status
+					this_s3upload.onError 'Upload error: ' + xhr.status, file
 
 			xhr.onerror = ->
-				this_s3upload.onError 'XHR error.'
+				this_s3upload.onError 'XHR error.', file
 
 			xhr.upload.onprogress = (e) ->
 				if e.lengthComputable
 					percentLoaded = Math.round (e.loaded / e.total) * 100
-					this_s3upload.onProgress percentLoaded, if percentLoaded == 100 then 'Finalizing.' else 'Uploading.'
+					this_s3upload.onProgress percentLoaded, (if percentLoaded == 100 then 'Finalizing.' else 'Uploading.'), public_url, file
 
 		xhr.setRequestHeader 'Content-Type', file.type
 		xhr.setRequestHeader 'x-amz-acl', 'public-read'
@@ -96,3 +95,4 @@ class window.S3Upload
 		this_s3upload = this
 		@executeOnSignedUrl file, (signedURL, publicURL) ->
 			this_s3upload.uploadToS3 file, signedURL, publicURL
+
