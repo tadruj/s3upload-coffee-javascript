@@ -107,7 +107,19 @@
       return xhr.send(file);
     };
 
+    S3Upload.prototype.validate = function(file) {
+        // should be overridden and return an error message (string)
+        // or a falsey value in case validation passes
+        return null;
+    };
+
     S3Upload.prototype.uploadFile = function(file) {
+      var error = this.validate(file);
+      if (error) {
+          this.onError(error, file);
+          return null;
+      }
+
       var this_s3upload;
       this_s3upload = this;
       return this.executeOnSignedUrl(file, function(signedURL, publicURL) {
