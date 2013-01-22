@@ -91,8 +91,17 @@ class window.S3Upload
 
 		xhr.send file
 
+	validate: (file) ->
+		# should be overridden and return an error message (string)
+		# or a falsey value in case the validation passes
+		null
+
 	uploadFile: (file) ->
+		error = @validate file
+		if error
+			@onError error, file
+			return null
+
 		this_s3upload = this
 		@executeOnSignedUrl file, (signedURL, publicURL) ->
 			this_s3upload.uploadToS3 file, signedURL, publicURL
-
