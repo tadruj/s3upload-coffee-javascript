@@ -22,7 +22,7 @@ class window.S3Upload
 
 	constructor: (options = {}) ->
 		_.extend(this, options)
-		@handleFileSelect $(@file_dom_selector).get(0)
+		@handleFileSelect jQuery(@file_dom_selector).get(0)
 
 	handleFileSelect: (file_element) ->
 		@onProgress 0, 'Upload started.'
