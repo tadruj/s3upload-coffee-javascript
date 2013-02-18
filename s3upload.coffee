@@ -21,7 +21,8 @@ class window.S3Upload
 
 	constructor: (options = {}) ->
 		_.extend(this, options)
-		@handleFileSelect $(@file_dom_selector).get(0)
+		if @file_dom_selector
+			@handleFileSelect $(@file_dom_selector).get(0)
 
 	handleFileSelect: (file_element) ->
 		@onProgress 0, 'Upload started.'
@@ -41,11 +42,13 @@ class window.S3Upload
 			xhr = null
 		xhr
 
-	executeOnSignedUrl: (file, callback) ->
+	executeOnSignedUrl: (file, callback, opts) ->
 		this_s3upload = this
 
 		xhr = new XMLHttpRequest()
-		xhr.open 'GET', @s3_sign_put_url + '?s3_object_type=' + file.type + '&s3_object_name=' + encodeURIComponent(file.name), true
+		type = opts && opts.type || file.type
+		name = opts && opts.name || file.name
+		xhr.open 'GET', @s3_sign_put_url + '?s3_object_type=' + type + '&s3_object_name=' + encodeURIComponent(name), true
 
 		# Hack to pass bytes through unprocessed.
 		xhr.overrideMimeType 'text/plain; charset=x-user-defined'
@@ -64,8 +67,10 @@ class window.S3Upload
 
 	# Use a CORS call to upload the given file to S3. Assumes the url
 	# parameter has been signed and is accessible for upload.
-	uploadToS3: (file, url, public_url) ->
+	uploadToS3: (file, url, public_url, opts) ->
 		this_s3upload = this
+
+		type = opts && opts.type || file.type
 
 		xhr = @createCORSRequest 'PUT', url
 		if !xhr
@@ -86,7 +91,7 @@ class window.S3Upload
 					percentLoaded = Math.round (e.loaded / e.total) * 100
 					this_s3upload.onProgress percentLoaded, (if percentLoaded == 100 then 'Finalizing.' else 'Uploading.'), public_url, file
 
-		xhr.setRequestHeader 'Content-Type', file.type
+		xhr.setRequestHeader 'Content-Type', type
 		xhr.setRequestHeader 'x-amz-acl', 'public-read'
 
 		xhr.send file
@@ -96,7 +101,7 @@ class window.S3Upload
 		# or a falsey value in case the validation passes
 		null
 
-	uploadFile: (file) ->
+	uploadFile: (file, opts) ->
 		error = @validate file
 		if error
 			@onError error, file
@@ -104,4 +109,5 @@ class window.S3Upload
 
 		this_s3upload = this
 		@executeOnSignedUrl file, (signedURL, publicURL) ->
-			this_s3upload.uploadToS3 file, signedURL, publicURL
+			this_s3upload.uploadToS3 file, signedURL, publicURL, opts
+		, opts
