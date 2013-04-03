@@ -27,7 +27,6 @@ class window.S3Upload
 	handleFileSelect: (file_element) ->
 		@onProgress 0, 'Upload started.'
 		files = file_element.files
-		output = []
 		for f in files
 			@uploadFile(f)
 
