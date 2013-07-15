@@ -1,7 +1,5 @@
 (function() {
-
   window.S3Upload = (function() {
-
     S3Upload.prototype.s3_sign_put_url = '/signS3put';
 
     S3Upload.prototype.file_dom_selector = '#file_upload';
@@ -64,11 +62,12 @@
       xhr.open('GET', this.s3_sign_put_url + '?s3_object_type=' + type + '&s3_object_name=' + encodeURIComponent(name), true);
       xhr.overrideMimeType('text/plain; charset=x-user-defined');
       xhr.onreadystatechange = function(e) {
-        var result;
+        var error, result;
         if (this.readyState === 4 && this.status === 200) {
           try {
             result = JSON.parse(this.responseText);
-          } catch (error) {
+          } catch (_error) {
+            error = _error;
             this_s3upload.onError('Signing server returned some ugly/empty JSON: "' + this.responseText + '"');
             return false;
           }
