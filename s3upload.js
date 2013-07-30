@@ -57,7 +57,7 @@
       var name, this_s3upload, type, xhr;
       this_s3upload = this;
       xhr = new XMLHttpRequest();
-      type = opts && opts.type || file.type;
+      type = opts && opts.type || file.type || "application/octet-stream";
       name = opts && opts.name || file.name;
       xhr.open('GET', this.s3_sign_put_url + '?s3_object_type=' + type + '&s3_object_name=' + encodeURIComponent(name), true);
       xhr.overrideMimeType('text/plain; charset=x-user-defined');
@@ -82,7 +82,7 @@
     S3Upload.prototype.uploadToS3 = function(file, url, public_url, opts) {
       var this_s3upload, type, xhr;
       this_s3upload = this;
-      type = opts && opts.type || file.type;
+      type = opts && opts.type || file.type || "application/octet-stream";
       xhr = this.createCORSRequest('PUT', url);
       if (!xhr) {
         this.onError('CORS not supported');

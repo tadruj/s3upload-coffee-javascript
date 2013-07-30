@@ -46,7 +46,7 @@ class window.S3Upload
 		this_s3upload = this
 
 		xhr = new XMLHttpRequest()
-		type = opts && opts.type || file.type
+		type = opts && opts.type || file.type || "application/octet-stream"
 		name = opts && opts.name || file.name
 		xhr.open 'GET', @s3_sign_put_url + '?s3_object_type=' + type + '&s3_object_name=' + encodeURIComponent(name), true
 
@@ -70,7 +70,7 @@ class window.S3Upload
 	uploadToS3: (file, url, public_url, opts) ->
 		this_s3upload = this
 
-		type = opts && opts.type || file.type
+		type = opts && opts.type || file.type || "application/octet-stream"
 
 		xhr = @createCORSRequest 'PUT', url
 		if !xhr
