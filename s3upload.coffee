@@ -58,7 +58,7 @@ class window.S3Upload
 				catch error
 					this_s3upload.onError 'Signing server returned some ugly/empty JSON: "' + this.responseText + '"'
 					return false
-				callback decodeURIComponent(result.signed_request), result.url
+				callback ( result.signed_request.replace /\+/g, '%2B' ), result.url
 			else if this.readyState == 4 and this.status != 200
 				this_s3upload.onError 'Could not contact request signing server. Status = ' + this.status
 		xhr.send()
