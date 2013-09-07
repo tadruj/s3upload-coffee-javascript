@@ -7,7 +7,7 @@
 class window.S3Upload
 	s3_object_name: 'default_name' # setting an object name is not recommended on the client side, override or namespace on server side
 	s3_sign_put_url: '/signS3put'
-	file_dom_selector: '#file_upload'
+	file_dom_selector: 'file_upload'
 
 	onFinishS3Put: (public_url) ->
 		console.log 'base.onFinishS3Put()', public_url
@@ -21,8 +21,8 @@ class window.S3Upload
 	# Don't override these
 
 	constructor: (options = {}) ->
-		_.extend(this, options)
-		@handleFileSelect jQuery(@file_dom_selector).get(0)
+		@[option] = options[option] for option of options
+		@handleFileSelect document.getElementById(@file_dom_selector)
 
 	handleFileSelect: (file_element) ->
 		@onProgress 0, 'Upload started.'
