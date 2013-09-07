@@ -21,7 +21,7 @@ class window.S3Upload
 	# Don't override these
 
 	constructor: (options = {}) ->
-		_.extend(this, options)
+		@[option] = options[option] for option of options
 		@handleFileSelect jQuery(@file_dom_selector).get(0)
 
 	handleFileSelect: (file_element) ->
