@@ -6,7 +6,7 @@
 
     S3Upload.prototype.s3_sign_put_url = '/signS3put';
 
-    S3Upload.prototype.file_dom_selector = '#file_upload';
+    S3Upload.prototype.file_dom_selector = 'file_upload';
 
     S3Upload.prototype.onFinishS3Put = function(public_url) {
       return console.log('base.onFinishS3Put()', public_url);
@@ -22,8 +22,10 @@
 
     function S3Upload(options) {
       if (options == null) options = {};
-      _.extend(this, options);
-      this.handleFileSelect(jQuery(this.file_dom_selector).get(0));
+      for (option in options) {
+        this[option] = options[option];
+      }
+      this.handleFileSelect(document.getElementById(this.file_dom_selector));
     }
 
     S3Upload.prototype.handleFileSelect = function(file_element) {
