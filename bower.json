@@ -1,0 +1,26 @@
+{
+  "name": "s3upload-coffee-javascript",
+  "version": "0.0.0",
+  "homepage": "https://github.com/tadruj/s3upload-coffee-javascript",
+  "description": "Client Side S3 CORS Upload for Amazon S3",
+  "main": "s3upload.js",
+  "keywords": [
+    "s3",
+    "upload",
+    "coffee",
+    "file"
+  ],
+  "licenses": [
+     {
+       "type": "Apache-2.0",
+       "url": "http://www.apache.org/licenses/LICENSE-2.0"
+     }
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
