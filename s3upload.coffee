@@ -8,6 +8,7 @@ class window.S3Upload
 	s3_object_name: 'default_name' # setting an object name is not recommended on the client side, override or namespace on server side
 	s3_sign_put_url: '/signS3put'
 	file_dom_selector: 'file_upload'
+	with_credentials: false
 
 	onFinishS3Put: (public_url) ->
 		console.log 'base.onFinishS3Put()', public_url
@@ -45,6 +46,7 @@ class window.S3Upload
 		this_s3upload = this
 
 		xhr = new XMLHttpRequest()
+		xhr.withCredentials = @with_credentials
 		xhr.open 'GET', @s3_sign_put_url + '?s3_object_type=' + file.type + '&s3_object_name=' + @s3_object_name, true
 
 		# Hack to pass bytes through unprocessed.
