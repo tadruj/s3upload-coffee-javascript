@@ -7,6 +7,14 @@ Here is my blog post explaining all the implementation details
 
 http://codeartists.tumblr.com/post/36892733572/how-to-directly-upload-files-to-amazon-s3-from-your
 
+### Options
+
+#### file_dom_selector
+The ID of the file input with associated files to upload
+
+#### files
+[File blobs](https://developer.mozilla.org/en-US/docs/Web/API/Blob) to be uploaded. (Supersedes DOM selector if present)
+
 ### License
 
 Copyright 2013 tadruj
