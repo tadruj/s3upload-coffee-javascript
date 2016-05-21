@@ -23,13 +23,19 @@ class window.S3Upload
 
 	constructor: (options = {}) ->
 		@[option] = options[option] for option of options
-		@handleFileSelect document.getElementById(@file_dom_selector)
 
-	handleFileSelect: (file_element) ->
+		if @files && @files.length > 0
+			handleFiles(@files)
+		else
+			@handleFileSelect document.getElementById(@file_dom_selector)
+
+	handleFiles: (files) ->
 		@onProgress 0, 'Upload started.'
-		files = file_element.files
 		for f in files
 			@uploadFile(f)
+
+	handleFileSelect: (file_element) ->
+		@handleFiles(file_element.files)
 
 	createCORSRequest: (method, url) ->
 		xhr = new XMLHttpRequest()
